@@ -76,4 +76,4 @@ jobs:
         run: packer validate .
 
       - name: Packer build with AMI upload
-        run: packer build -var 'skip_create_ami=false'
+        run: packer build -var 'skip_create_ami=false' .
