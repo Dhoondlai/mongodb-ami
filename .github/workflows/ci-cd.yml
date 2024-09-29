@@ -1,0 +1,79 @@
+name: Build and Deploy MongoDB AMI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  PRODUCT_VERSION: "1.11.2"
+
+jobs:
+  BuildAMI:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup packer
+        uses: hashicorp/setup-packer@main
+        id: setup
+        with:
+          version: ${{ env.PRODUCT_VERSION }}
+
+      - name: Setup AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Packer init
+        run: packer init .
+
+      - name: Packer fmt
+        run: packer fmt -check .
+
+      - name: Packer validate
+        run: packer validate .
+
+      - name: Packer build without AMI upload
+        run: packer build
+
+  BuildAndPushAMI:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    environment:
+      name: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup packer
+        uses: hashicorp/setup-packer@main
+        id: setup
+        with:
+          version: ${{ env.PRODUCT_VERSION }}
+
+      - name: Setup AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Packer init
+        run: packer init .
+
+      - name: Packer fmt
+        run: packer fmt -check .
+
+      - name: Packer validate
+        run: packer validate .
+
+      - name: Packer build with AMI upload
+        run: packer build -var 'skip_create_ami=false'
