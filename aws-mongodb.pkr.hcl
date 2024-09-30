@@ -21,9 +21,9 @@ source "amazon-ebs" "mongodb-ubuntu-22" {
     most_recent = true
     owners      = ["099720109477"]
   }
-  ssh_username    = "ubuntu"
-  skip_create_ami = var.skip_create_ami
-  force_deregister = true # to save space
+  ssh_username          = "ubuntu"
+  skip_create_ami       = var.skip_create_ami
+  force_deregister      = true # to save space
   force_delete_snapshot = true # to save space
 }
 
