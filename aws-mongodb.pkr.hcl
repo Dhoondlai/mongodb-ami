@@ -7,10 +7,10 @@ packer {
   }
 }
 
-source "amazon-ebs" "ubuntu" {
-  ami_name      = "learn-packer-linux-aws"
+source "amazon-ebs" "mongodb-ubuntu-22" {
+  ami_name      = "mongodb-ubuntu-22"
   instance_type = "t2.micro"
-  region        = "us-west-2"
+  region        = "us-east-1"
   source_ami_filter {
     filters = {
       name                = "ubuntu/images/*ubuntu-jammy-22.04-amd64-server-*"
@@ -23,12 +23,14 @@ source "amazon-ebs" "ubuntu" {
   }
   ssh_username    = "ubuntu"
   skip_create_ami = var.skip_create_ami
+  force_deregister = true # to save space
+  force_delete_snapshot = true # to save space
 }
 
 build {
-  name = "learn-packer"
+  name = "mongodb-ubuntu-22"
   sources = [
-    "source.amazon-ebs.ubuntu"
+    "source.amazon-ebs.mongodb-ubuntu-22"
   ]
 
 
