@@ -59,3 +59,17 @@ After enabling authentication, restart the MongoDB service by running the follow
 ```bash
 sudo systemctl restart mongod
 ```
+
+## Connect to MongoDB
+
+Connect to your instance using the following command:
+
+```bash
+mongo -u admin -p yourSecurePassword --authenticationDatabase admin
+```
+
+Or, if using a connection string:
+
+```bash
+mongodb://username:password@IPAddress:27017/?authSource=admin
+```
